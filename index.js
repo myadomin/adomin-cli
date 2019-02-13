@@ -1,5 +1,4 @@
 #! /usr/bin/env node
-
 const program = require('commander')
 const chalk = require('chalk')
 const download = require('download-git-repo')
@@ -23,7 +22,7 @@ program
     spinner.start()
     download(url[projectType], toPath, { clone: true }, function (err) {
       if (err) {
-        console.log(chalk.red('\n下载失败\n'), err)
+        console.log(chalk.red('\n下载失败: 当前目录必须是空目录\n'), err)
       } else {
         console.log(chalk.green('\n下载成功'))
       }
