@@ -1,12 +1,25 @@
 {
   "name": "adomin-cli",
-  "version": "0.1.1",
-  "description": "Auto generate vue project template",
+  "version": "0.1.2",
   "main": "./index.js",
   "bin": {
     "adomin-cli": "./index.js"
   },
-  "author": "adomin",
+  "author": {
+    "name": "adomin",
+    "email": "253435412@qq.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/myadomin/adomin-cli.git"
+  },
+  "keywords": [
+    "scaffolding",
+    "boilerplate",
+    "vue",
+    "react"
+  ],
+  "description": "CLI for scaffolding vue or react projects",
   "license": "MIT",
   "dependencies": {
     "chalk": "^2.4.2",
