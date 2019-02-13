@@ -8,8 +8,8 @@ const spinner = new Spinner('下载中.. %s')
 const url = {
   // gitlab私有库
   // const url = 'direct:http://192.xxx.0.xxx:8888/luominmin/caizhi-admin.git#qa'
-  react: 'direct:https://github.com/myadomin/react-adomin-temp.git',
-  vue: 'direct:https://github.com/myadomin/vue-temp-adomin.git'
+  react: 'direct:https://github.com/myadomin/react-temp.git',
+  vue: 'direct:https://github.com/myadomin/vue-temp.git'
 }
 
 program

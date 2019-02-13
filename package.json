@@ -1,6 +1,6 @@
 {
   "name": "adomin-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Auto generate vue project template",
   "main": "./index.js",
   "bin": {
