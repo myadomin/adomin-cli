@@ -21,49 +21,6 @@ const log = (str) => console.log(str)
 const logSuccess = (str) => console.log(chalk.green(str))
 const logError = (str) => console.log(chalk.red(str))
 
-// download file from git, save to downloadPath(从git下载模板 存到downloadPath)
-const downloadFile = (projectType, generatorPath, meta) => {
-  log(`generator ${projectType} temp, to folder ${__dirname + '\\' + generatorPath}`)
-  spinner.start()
-  const downloadPath = generatorPath + '_temp'
-  download(url[projectType], downloadPath, { clone: true }, function (err) {
-    if (err) {
-      logError('download error')
-    } else {
-      generator(downloadPath, generatorPath, meta)
-    }
-  })
-}
-
-// use file downloadPath generator file generatorPath(将文件downloadPath经过metalsmith处理为文件generatorPath)
-const generator = (downloadPath, generatorPath, meta) => {
-  metalsmith(__dirname)
-  .metadata(meta)
-  .source(downloadPath)
-  .destination(generatorPath)
-  .clean(true)
-  .use((files, metalsmith, done) => {
-    const meta = metalsmith.metadata()
-    Object.keys(files).forEach(fileName => {
-      // 只对package.json做Handlebars的模板解析
-      if (fileName.indexOf('package.json') !== -1) {
-        const t = files[fileName].contents.toString()
-        files[fileName].contents = new Buffer.from(Handlebars.compile(t)(meta))
-      }
-      // 删除路径带example的文件
-      if (meta.needExample === 'no' && fileName.indexOf('example') !== -1) {
-        delete files[fileName]
-      }
-    })
-    done()
-  })
-  .build(function(err) {
-    rm(downloadPath)
-    err ? log(err) : logSuccess('generator success')
-    spinner.stop()
-  });
-}
-
 const promptArr = [
   {
     type: 'list',
@@ -94,12 +51,55 @@ const promptArr = [
   }
 ]
 
+// download file from git, save to downloadPath(从git下载模板 存到downloadPath)
+const downloadFile = (projectType, generatorPath, meta) => {
+  log(`generator ${projectType} temp, to folder ${process.cwd()}\\${generatorPath}`)
+  spinner.start()
+  const downloadPath = generatorPath + '_temp'
+  download(url[projectType], downloadPath, { clone: true }, function (err) {
+    if (err) {
+      logError('download error')
+    } else {
+      generator(downloadPath, generatorPath, meta)
+    }
+  })
+}
+
+// use file downloadPath generator file generatorPath(将文件downloadPath经过metalsmith处理为文件generatorPath)
+const generator = (downloadPath, generatorPath, meta) => {
+  metalsmith(process.cwd())
+  .metadata(meta)
+  .source(downloadPath)
+  .destination(generatorPath)
+  .clean(true)
+  .use((files, metalsmith, done) => {
+    const meta = metalsmith.metadata()
+    Object.keys(files).forEach(fileName => {
+      // 只对package.json做Handlebars的模板解析
+      if (fileName.indexOf('package.json') !== -1) {
+        const t = files[fileName].contents.toString()
+        files[fileName].contents = new Buffer.from(Handlebars.compile(t)(meta))
+      }
+      // 删除路径带example的文件
+      if (meta.needExample === 'no' && fileName.indexOf('example') !== -1) {
+        delete files[fileName]
+      }
+    })
+    done()
+  })
+  .build(function(err) {
+    rm(downloadPath)
+    err ? log(err) : logSuccess('generator success')
+    spinner.stop()
+  });
+}
+
 program
 .version(pkg.version, '-v, --version')
 .command('init [projectType] [projectName]')
 .action(function(projectType, projectName, options){
   if ((projectType === 'react' || projectType === 'vue') && projectName) {
-    fs.pathExists(__dirname + '\\' + projectName).then(exists => {
+    fs.pathExists(projectName).then(exists => {
       if (exists) {
         logError('folder existed')
       } else {
