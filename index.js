@@ -4,7 +4,7 @@ const chalk = require('chalk')
 const download = require('download-git-repo')
 const pkg = require('./package.json')
 const Spinner = require('cli-spinner').Spinner
-const spinner = new Spinner('generatoring... %s')
+const spinner = new Spinner('generating... %s')
 const inquirer = require('inquirer');
 const fs = require('fs-extra')
 const metalsmith  = require('metalsmith')
@@ -30,58 +30,58 @@ const promptArr = [
       "no",
       "yes"
     ],
-  },
-  {
-    type: 'input',
-    name: 'projectName',
-    message: 'input projectName',
-    default: 'myProject'
-  },
-  {
-    type: 'input',
-    name: 'projectVersion',
-    message: 'input projectVersion',
-    default: '1.0.0'
-  },
-  {
-    type: 'input',
-    name: 'projectDescription',
-    message: 'input projectDescription',
-    default: `A project named myProject`
   }
+  // {
+  //   type: 'input',
+  //   name: 'projectName',
+  //   message: 'input projectName',
+  //   default: 'myProject'
+  // },
+  // {
+  //   type: 'input',
+  //   name: 'projectVersion',
+  //   message: 'input projectVersion',
+  //   default: '1.0.0'
+  // },
+  // {
+  //   type: 'input',
+  //   name: 'projectDescription',
+  //   message: 'input projectDescription',
+  //   default: `A project named myProject`
+  // }
 ]
 
 // download file from git, save to downloadPath(从git下载模板 存到downloadPath)
-const downloadFile = (projectType, generatorPath, meta) => {
-  log(`generator ${projectType} temp, to folder ${process.cwd()}\\${generatorPath}`)
+const downloadFile = (projectType, generatePath, meta) => {
+  log(`generate ${projectType} temp, to folder ${process.cwd()}\\${generatePath}`)
   spinner.start()
-  const downloadPath = generatorPath + '_temp'
+  const downloadPath = generatePath + '_temp'
   download(url[projectType], downloadPath, { clone: true }, function (err) {
     if (err) {
       logError('download error')
     } else {
-      generator(downloadPath, generatorPath, meta)
+      generate(downloadPath, generatePath, meta)
     }
   })
 }
 
-// use file downloadPath generator file generatorPath(将文件downloadPath经过metalsmith处理为文件generatorPath)
-const generator = (downloadPath, generatorPath, meta) => {
+// use file downloadPath generate file generatePath(根据meta将文件downloadPath用metalsmith处理为文件generatePath)
+const generate = (downloadPath, generatePath, meta) => {
   metalsmith(process.cwd())
   .metadata(meta)
   .source(downloadPath)
-  .destination(generatorPath)
+  .destination(generatePath)
   .clean(true)
   .use((files, metalsmith, done) => {
     const meta = metalsmith.metadata()
     Object.keys(files).forEach(fileName => {
-      // 只对package.json做Handlebars的模板解析
-      if (fileName.indexOf('package.json') !== -1) {
-        const t = files[fileName].contents.toString()
-        files[fileName].contents = new Buffer.from(Handlebars.compile(t)(meta))
-      }
-      // 删除路径带example的文件
-      if (meta.needExample === 'no' && fileName.indexOf('example') !== -1) {
+      // 只对package.json做Handlebars的模板解析(根据meta解析)
+      // if (fileName.indexOf('package.json') !== -1) {
+      //   const t = files[fileName].contents.toString()
+      //   files[fileName].contents = new Buffer.from(Handlebars.compile(t)(meta))
+      // }
+      // 根据meta.needExample 决定是否删除examples文件夹
+      if (meta.needExample === 'no' && fileName.indexOf('examples') !== -1) {
         delete files[fileName]
       }
     })
@@ -89,7 +89,7 @@ const generator = (downloadPath, generatorPath, meta) => {
   })
   .build(function(err) {
     rm(downloadPath)
-    err ? log(err) : logSuccess('generator success')
+    err ? log(err) : logSuccess('generate success')
     spinner.stop()
   });
 }

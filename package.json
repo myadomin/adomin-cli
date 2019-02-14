@@ -13,6 +13,9 @@
     "type": "git",
     "url": "https://github.com/myadomin/adomin-cli.git"
   },
+  "engines": {
+    "node": ">=6"
+  },
   "keywords": [
     "scaffolding",
     "boilerplate",
