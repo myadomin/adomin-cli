@@ -65,7 +65,7 @@ const downloadFile = (projectType, generatePath, meta) => {
   })
 }
 
-// use file downloadPath generate file generatePath(根据meta将文件downloadPath用metalsmith处理为文件generatePath)
+// use file downloadPath generate file generatePath(用metalsmith根据meta将文件downloadPath处理为文件generatePath)
 const generate = (downloadPath, generatePath, meta) => {
   metalsmith(process.cwd())
   .metadata(meta)
